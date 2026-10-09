@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نموذج تقييم أداء موظف</title>
+<style>
+:root{--bg:#f3f4f8;--card:#fff;--ink:#1d2433;--mute:#5d6678;--line:#d9dde7;--brand:#2f3a8f;--soft:#eceefa;--err:#c4262e;--ok:#1f7a4d}
+@media (prefers-color-scheme:dark){:root{--bg:#14171f;--card:#1e222d;--ink:#e8eaf0;--mute:#9aa3b5;--line:#343a4a;--brand:#8c98ff;--soft:#262b3d;--err:#ff7b80;--ok:#6fd3a0}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",Tahoma,Arial,sans-serif;line-height:1.6;padding-bottom:40px}
+header{background:var(--brand);color:#fff;padding:26px 16px}
+header div,main{max-width:860px;margin:0 auto}
+header h1{margin:0;font-size:1.35rem}
+header p{margin:4px 0 0;opacity:.85;font-size:.95rem}
+main{padding:16px}
+.note{color:var(--mute);font-size:.9rem;margin:8px 0 16px}
+fieldset{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:16px;margin:0 0 14px;min-width:0}
+fieldset.bad{border-color:var(--err)}
+legend,label.q{font-weight:700;display:block;padding:0}
+legend{padding:0 6px}
+.q .en,.opt .en{direction:ltr;display:block;text-align:left}
+.num{color:var(--mute);font-weight:400;font-size:.8rem;display:block}
+.req{color:var(--err)}
+select{direction:ltr}
+input[type=text],select{width:100%;padding:10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:inherit;margin-top:8px}
+input:focus-visible,select:focus-visible,button:focus-visible,.opt input:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:7px 0;cursor:pointer}
+.opt input{margin-top:6px}
+.scroll{overflow-x:auto;margin-top:10px}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:.9rem}
+th{font-weight:600;color:var(--mute);padding:8px 4px;text-align:center;direction:ltr;font-size:.8rem}
+td{padding:8px 4px;text-align:center;border-top:1px solid var(--line)}
+td.t{text-align:start;min-width:210px;width:34%}
+td.t .en{direction:ltr;text-align:left;display:block}
+tr.bad td.t{color:var(--err)}
+tbody tr:nth-child(odd){background:var(--soft)}
+td input{width:20px;height:20px;accent-color:var(--brand)}
+.err{color:var(--err);font-size:.85rem;display:none;margin-top:6px}
+.bad .err{display:block}
+button{font:inherit;padding:11px 26px;border-radius:6px;border:0;background:var(--brand);color:#fff;font-weight:700;cursor:pointer}
+button.alt{background:transparent;color:var(--brand);border:1px solid var(--brand);margin-inline-start:8px}
+.hidden{display:none}
+.cb{position:relative}
+#namelist{position:absolute;inset-inline:0;top:100%;z-index:20;margin:2px 0 0;padding:4px 0;list-style:none;background:var(--card);border:1px solid var(--line);border-radius:6px;max-height:240px;overflow:auto;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+#namelist li{padding:8px 12px;cursor:pointer}
+#namelist li[aria-selected=true],#namelist li:hover{background:var(--brand);color:#fff}
+#namelist li.none{color:var(--mute);cursor:default;background:none}
+#namelist mark{background:none;color:inherit;font-weight:700;text-decoration:underline}
+#done{background:var(--card);border:1px solid var(--ok);border-radius:8px;padding:22px}
+#done h2{margin-top:0;color:var(--ok)}
+pre{direction:ltr;text-align:left;background:var(--soft);padding:12px;border-radius:6px;overflow:auto;max-height:260px;font-size:.8rem}
+#savedlist{list-style:none;margin:0;padding:0}
+#savedlist li{display:flex;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--line);flex-wrap:wrap}
+#savedlist li:first-child{border-top:0}
+#savedlist li span{flex:1;min-width:200px}
+#savedlist button{padding:6px 14px;font-size:.85rem}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.bar span{flex-basis:100%;color:var(--ok);font-weight:700}
+.bar button.alt{margin:0}
+#rep h2{margin:0 0 4px}
+#rep h3{margin:18px 0 6px;font-size:1rem}
+#rep table{min-width:0;margin-bottom:6px}
+#rep td,#rep th{border:1px solid var(--line);padding:6px 8px;text-align:start;direction:rtl;font-size:.9rem}
+#rep th{width:34%;background:var(--soft);color:var(--ink)}
+#rep td.r{width:28%;direction:ltr;text-align:center;font-weight:600}
+#rep .avg{font-weight:700;text-align:end}
+#rep tbody tr:nth-child(odd){background:none}
+@media print{
+:root{--bg:#fff;--card:#fff;--ink:#000;--mute:#444;--line:#888;--soft:#eee;--ok:#000}
+*{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{background:#fff;padding:0}header,.noprint,#f,.note{display:none!important}
+main{max-width:none;padding:0}#done{border:0;padding:0}#rep h3{break-after:avoid}#rep tr{break-inside:avoid}}
+</style>
+</head>
+<body>
+<header><div>
+<h1>Annual Performance Review - <span class="yr"></span></h1>
+<p>نموذج تقييم أداء موظف عن عام <span class="yr"></span></p>
+</div></header>
+<main>
+<p class="note">لن يتم جمع اسمك أو بريدك تلقائيًا إلا إذا أدخلته بنفسك. الحقول المميزة بـ <span class="req">*</span> إلزامية.<br><span dir="ltr">Fields marked * are required.</span></p>
+<section id="saved" class="hidden noprint">
+<fieldset><legend>التقييمات المحفوظة على هذا الجهاز</legend>
+<ul id="savedlist"></ul>
+<label class="opt" style="cursor:default"><span>استيراد نسخة محفوظة (JSON):</span><input type="file" id="imp" accept=".json,application/json"></label>
+</fieldset></section>
+<form id="f" novalidate>
+
+<fieldset data-req>
+<label class="q" for="name"><span class="num">Question 1/11</span><span class="en">Employee Name :</span>اسم الموظف <span class="req">*</span></label>
+<div class="cb">
+<input type="text" id="name" name="employee_name" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="namelist" aria-autocomplete="list" placeholder="ابدأ بكتابة أول حرف من الاسم / Type to search">
+<ul id="namelist" role="listbox" class="hidden"></ul>
+</div>
+<div class="err" id="nameerr">اختر اسم الموظف من القائمة</div>
+</fieldset>
+
+<fieldset data-req>
+<label class="q" for="dept"><span class="num">Question 2/11</span><span class="en">Department :</span>القسم <span class="req">*</span></label>
+<select id="dept" name="department"><option value="">Select your answer / اختر إجابتك</option></select>
+<div class="err">هذا الحقل إلزامي</div>
+</fieldset>
+
+<fieldset>
+<label class="q" for="edu"><span class="num">Question 3/11</span><span class="en">Last Educational certificate</span>آخر مؤهل دراسي</label>
+<input type="text" id="edu" name="last_certificate" placeholder="Enter your answer / اكتب إجابتك">
+</fieldset>
+
+<fieldset data-req id="exp">
+<legend><span class="num">Question 4/11</span><span class="en" style="direction:ltr">Number of years of Experience</span>عدد سنوات الخبرة <span class="req">*</span></legend>
+<label class="opt"><input type="radio" name="experience_type" value="IN AFF"><span>IN AFF</span></label>
+<label class="opt"><input type="radio" name="experience_type" value="Others"><span>Others</span></label>
+<div class="err">اختر إجابة</div>
+</fieldset>
+
+<fieldset data-req>
+<label class="q" for="affy"><span class="num">Question 5/11</span><span class="en">How many years of Experience in AFF ?</span>كم سنة خبرة في AFF؟ <span class="req">*</span></label>
+<input type="text" id="affy" name="years_in_aff" inputmode="decimal" placeholder="Enter your answer / اكتب إجابتك">
+<div class="err">هذا الحقل إلزامي</div>
+</fieldset>
+
+<fieldset data-req>
+<label class="q" for="oth"><span class="num">Question 6/11</span><span class="en">What are the Other Companies ? &amp; How many years of Experience in them ?</span>ما هي الشركات الأخرى وكم سنة خبرة فيها؟ <span class="req">*</span></label>
+<input type="text" id="oth" name="other_companies" placeholder="Enter your answer / اكتب إجابتك">
+<div class="err">هذا الحقل إلزامي</div>
+</fieldset>
+
+<div id="matrices"></div>
+
+<fieldset data-req>
+<label class="q" for="sug"><span class="num">Question 10/11</span><span class="en">Suggestions for Improving Employee Skills</span>اقتراحات لرفع مستوى قدرات الموظف <span class="req">*</span></label>
+<select id="sug" name="suggestions"><option value="">Select your answer / اختر إجابتك</option></select>
+<div class="err">هذا الحقل إلزامي</div>
+</fieldset>
+
+<fieldset data-req id="rec">
+<legend><span class="num">Question 11/11</span><span class="en" style="direction:ltr">Evaluator’s Recommendation</span>توصية معتمد التقييم <span class="req">*</span></legend>
+<div id="recopts"></div>
+<div class="err">اختر إجابة</div>
+</fieldset>
+
+<button type="submit">Submit / إرسال</button>
+</form>
+
+<section id="done" class="hidden" tabindex="-1">
+<div class="noprint bar">
+<span id="savemsg"></span>
+<button type="button" id="print">طباعة / حفظ PDF</button>
+<button type="button" class="alt" id="edit">تعديل التقييم</button>
+<button type="button" class="alt" id="dl">تنزيل نسخة (JSON)</button>
+<button type="button" class="alt" id="again">تقييم جديد</button>
+</div>
+<div id="rep"></div>
+</section>
+</main>
+
+<script>
+/* ===== إعدادات ===== */
+// عدّل القوائم حسب نموذجك الأصلي (لم تكن خياراتها ظاهرة في الصور)
+const DEPARTMENTS = ["Production of Flavour Powder","Production of Flavour Liquid","Production of Fragrance","Production of Spray drier","QC","Sales","Warehouses","Maintenance","Accounting","Planning & Production","Logistics","Customers service","R&D","IT","Admin","Others"];
+const SUGGESTIONS = ["Training - تدريب","Mentoring - توجيه","Courses - دورات","Other - أخرى"];
+
+const SCALE = ["Poor (1)","Fair (2)","Good (3)","Very Good (4)","Excellent (5)","NA"];
+const SECTIONS = [
+ {n:7,key:"professional",en:"Professional Performance part",ar:"تقييم الأداء المهني",rows:[
+  ["Commitment to all working hours","الالتزام بكل أوقات العمل"],
+  ["Ability to take responsibility","القدرة على تحمل المسؤولية"],
+  ["Ability to develop new work techniques","القدرة على تطوير تقنيات جديدة بالعمل"],
+  ["Implementation of company regulations","تنفيذ اللوائح الخاصة بالشركة"],
+  ["Performance level in executing required tasks","مستوى الأداء في تنفيذ الاعمال المطلوبة"],
+  ["Accuracy in work performance","دقة الأداء في العمل"],
+  ["Ability to work under pressure","العمل تحت ضغط"],
+  ["Works smart, not hard","يعمل بذكاء، وليس بمشقة"],
+  ["Accuracy in documentation and organization","دقة التوثيق و التنظيم"],
+  ["Commitment to the company’s best interest","الحرص على الصالح العام للشركة"],
+  ["Commitment to continuous learning","الالتزام بالتعليم المستمر"]]},
+ {n:8,key:"personal",en:"Personal Behavior & Skills Assessment Part",ar:"الصفات والمهارات الشخصية",rows:[
+  ["Problem-solving ability","القدرة علي حل المشاكل"],
+  ["Handling new developments & System at work","التعامل مع المستجدات في العمل"],
+  ["Endurance and self-reliance","التحمل و الاعتماد على النفس"],
+  ["Handles problems decisively","يتعامل مع المشاكل بشكل حاسم"],
+  ["Personal Hygiene","المظهر و النظافة الشخصي"],
+  ["Not easily irritated under pressure","غير حاد الطبع تحت الضغط"],
+  ["Sets aside personal biases and desires","يضع التحيزات والرغبات الشخصية جانبًا"],
+  ["Communication skills","مهارات التواصل"]]},
+ {n:9,key:"relationships",en:"Relationships With Others",ar:"العلاقات مع الآخرين",rows:[
+  ["Relationship with supervisors","العلاقة بالرؤساء"],
+  ["Cooperation with colleagues","التعاون مع الزملاء"],
+  ["Relationship with co-workers","العلاقة بزملاء العمل"],
+  ["Customers (for customer-related roles)","العملاء (من لهم علاقة بالعملاء)"],
+  ["Listens to others","يستمع إلى الآخرين"]]}
+];
+const RECS = [["Annual increase","زيادة سنوية"],["No increase","يحرم من الزيادة"],["Transfer to another location","نقله لمكان اخر"],["Termination","الاستغناء عنه"],["Promotion","الترقية"],["Reward","مكافأة"]];
+
+const $ = s => document.querySelector(s);
+
+/* ===== قاعدة بيانات الموظفين (من ملف المصنع.xls) ===== */
+const EMPLOYEES = ["صفوت ماهر", "عبد النور شحاته", "كيرلس ممدوح شبيب", "اشرف جرجس حنا", "عاطف راضى ناشد", "ناشد وفقى ناشد", "عماد محروس عبد الشهيد", "بولس حنا", "بهجت جرجس حنا", "بشندى موسى بشندى", "ناجح عدلى غبريال", "حسن إسماعيل سرحان", "مينا فرحات أمين", "رزق فواز أمين", "جاب الله جيد", "راغب فتحى فهمى", "نصر عادل لويز", "جرجس جاب الله", "رافت سعد", "عماد لويز", "يوستينا نسيم", "فريد ادوارد", "ابراهيم اسحاق", "لطفى غالى", "ماجد شلبى زكى", "جوزيف بطسطا زكى", "موسى زكى عبد الملاك", "ايمن يوسف رمزى", "دانيال عياد", "مينا عبد الملاك جاد الرب", "داود ابراهيم بطرس", "عماد عطالله سيدهم", "عماد عزمى بسندى", "عيسى منتياس جورجى", "صموئيل جميل توفيق", "سامح سمير نصر الله", "مينا عزت رزق", "رومانى عبيد محروس", "عدلى نص شنوده", "توفيق عطيه توفيق", "مايكل ثروت", "تامر سامى روفائيل", "ابراهيم خليل فانوس", "طلعت كمال تسعاوى", "هانى امير ملك", "حنا بشرى حنا", "مينا ثروت مسعد", "اسعد حليم اسكندر", "يوسف فوزى جرجس", "ابانوب شوقى شكرى", "جوزيف حنا ناشد", "غطاس فاروق غطاس", "يوسف عاصى كراس", "مينا نبيل عياد", "مينا محروس فؤاد", "رمسيس عاطف زكريا", "عيسى جاب الله جيد", "ماهر توفى عرندس", "ميلاد رافت بقطر", "عماد عادل", "رافت منتياس جورجى", "امين لبس صدقى", "ميشيل عشم شاكر", "ايهاب نصر منتياس", "رومانى محروس فؤاد", "رامى رافت بقطر", "ناصر نبيل", "عماد عطاالله الامن", "حبيب حليم", "الطيب محمد", "كرم عادل", "صلاح داود", "مينا عبد النور", "عماد خليفه", "شادى صفوت", "خيرى زكريا", "مادونا عفت", "عماد مجدى", "ماجد سمير", "بيتر فوزى", "رفيق صلاح", "مريان عفت", "شنوده عوض", "جان رمزى", "شنوده ميرهم", "جورجينا لطفى", "جوزيف يوسف", "ابانوب عادل", "احمد محمد", "رامى مترى", "لورا رافت", "زكريا رمزى", "جورج - الاتوبيس", "امجد اشرف", "فادى ضيف", "مهنى عايد", "ميخائيل رزق", "كيرلس منير", "عبد الشهيد ابراهيم"];
+const norm = s => s.normalize("NFKD").replace(/[\u064B-\u0652\u0640]/g,"").replace(/[أإآٱ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه").replace(/[ؤئ]/g,m=>m=="ؤ"?"و":"ي").replace(/\s+/g," ").trim().toLowerCase();
+const EMP = EMPLOYEES.map(n => ({n, k:norm(n)}));
+const nameEl = $("#name"), listEl = $("#namelist");
+let chosen = "", active = -1, shown = [];
+function search(q){
+  q = norm(q); if(!q) return EMP.slice(0,50);
+  const a=[],b=[];
+  EMP.forEach(e => { if(e.k.startsWith(q)) a.push(e); else if(e.k.split(" ").some(w=>w.startsWith(q)) || e.k.includes(q)) b.push(e); });
+  return a.concat(b);
+}
+function render(){
+  shown = search(nameEl.value); active = shown.length ? 0 : -1;
+  listEl.innerHTML = shown.length ? shown.map((e,i)=>`<li role="option" id="o${i}" data-i="${i}" aria-selected="${i===0}">${e.n}</li>`).join("") : '<li class="none">لا توجد نتائج</li>';
+  listEl.classList.remove("hidden"); nameEl.setAttribute("aria-expanded","true");
+}
+function close(){ listEl.classList.add("hidden"); nameEl.setAttribute("aria-expanded","false"); }
+function pick(i){
+  if(i<0||!shown[i]) return;
+  chosen = shown[i].n; nameEl.value = chosen; close();
+  nameEl.closest("fieldset").classList.remove("bad");
+}
+function move(d){
+  if(!shown.length) return; active = (active+d+shown.length)%shown.length;
+  [...listEl.children].forEach((li,i)=>li.setAttribute("aria-selected",i===active));
+  listEl.children[active].scrollIntoView({block:"nearest"});
+}
+nameEl.addEventListener("input", () => { chosen = ""; render(); });
+nameEl.addEventListener("focus", render);
+nameEl.addEventListener("keydown", e => {
+  if(e.key==="ArrowDown"){e.preventDefault(); listEl.classList.contains("hidden")?render():move(1);}
+  else if(e.key==="ArrowUp"){e.preventDefault(); move(-1);}
+  else if(e.key==="Enter" && !listEl.classList.contains("hidden")){e.preventDefault(); pick(active);}
+  else if(e.key==="Escape") close();
+});
+listEl.addEventListener("mousedown", e => { const li=e.target.closest("li[data-i]"); if(li){e.preventDefault(); pick(+li.dataset.i);} });
+document.addEventListener("click", e => { if(!e.target.closest(".cb")) close(); });
+nameEl.addEventListener("blur", () => setTimeout(() => { close(); if(chosen) nameEl.value = chosen; }, 120));
+const fill = (sel, arr) => arr.forEach(v => sel.add(new Option(v, v)));
+fill($("#dept"), DEPARTMENTS); fill($("#sug"), SUGGESTIONS);
+
+$("#recopts").innerHTML = RECS.map(([e,a],i) =>
+  `<label class="opt"><input type="radio" name="recommendation" value="${e}"><span><span class="en">${e}</span>${a}</span></label>`).join("");
+
+$("#matrices").innerHTML = SECTIONS.map(s => `
+<fieldset data-req data-m="${s.key}">
+<legend><span class="num">Question ${s.n}/11</span><span style="direction:ltr;display:block">${s.en}</span>${s.ar} <span class="req">*</span></legend>
+<div class="scroll"><table><thead><tr><th></th>${SCALE.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody>
+${s.rows.map(([e,a],r)=>`<tr data-r="${r}"><td class="t"><span class="en">${e}</span>${a}</td>${SCALE.map((c,i)=>
+ `<td><input type="radio" name="${s.key}_${r}" value="${c}" aria-label="${e} - ${c}"></td>`).join("")}</tr>`).join("")}
+</tbody></table></div>
+<div class="err">قيّم كل البنود (اختر NA إن لم ينطبق)</div>
+</fieldset>`).join("");
+
+function validate(){
+  let first = null;
+  document.querySelectorAll("fieldset[data-req]").forEach(fs => {
+    let ok = true;
+    if (fs.dataset.m){
+      const s = SECTIONS.find(x => x.key === fs.dataset.m);
+      s.rows.forEach((_,r) => {
+        const tr = fs.querySelector(`tr[data-r="${r}"]`);
+        const got = !!fs.querySelector(`input[name="${s.key}_${r}"]:checked`);
+        tr.classList.toggle("bad", !got); if(!got) ok = false;
+      });
+    } else if (fs.querySelector("input[type=radio]")){
+      ok = !!fs.querySelector("input:checked");
+    } else {
+      const el = fs.querySelector("input,select");
+      ok = el.id==="name" ? (chosen!=="" && el.value===chosen) : el.value.trim() !== "";
+    }
+    fs.classList.toggle("bad", !ok);
+    if (!ok && !first) first = fs;
+  });
+  if (first) first.scrollIntoView({behavior:"smooth",block:"center"});
+  return !first;
+}
+
+function collect(){
+  const d = {submitted_at:new Date().toISOString(),
+    employee_name:chosen, department:$("#dept").value,
+    last_certificate:$("#edu").value.trim(),
+    experience_type:(document.querySelector("input[name=experience_type]:checked")||{}).value||"",
+    years_in_aff:$("#affy").value.trim(), other_companies:$("#oth").value.trim()};
+  SECTIONS.forEach(s => {
+    d[s.key] = {};
+    s.rows.forEach(([e],r) => { const c = document.querySelector(`input[name="${s.key}_${r}"]:checked`); d[s.key][e] = c ? c.value : ""; });
+  });
+  d.suggestions = $("#sug").value;
+  d.recommendation = (document.querySelector("input[name=recommendation]:checked")||{}).value||"";
+  return d;
+}
+
+
+/* ===== السنة والحفظ والتقرير ===== */
+const THIS_YEAR = new Date().getFullYear();
+let curYear = THIS_YEAR, last = null;
+function setYear(y){ curYear = y; document.querySelectorAll(".yr").forEach(e => e.textContent = y); document.title = "نموذج تقييم أداء موظف عن عام " + y; }
+setYear(THIS_YEAR);
+const KEY = "perf_reviews_v1";
+const loadAll = () => { try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch(_) { return {}; } };
+const saveAll = o => { try { localStorage.setItem(KEY, JSON.stringify(o)); return true; } catch(_) { return false; } };
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const setRadio = (n, v) => { if(!v) return; const el = [...document.getElementsByName(n)].find(x => x.value === v); if(el) el.checked = true; };
+
+function collect(){
+  const d = {year:curYear, saved_at:new Date().toISOString(),
+    employee_name:chosen, department:$("#dept").value,
+    last_certificate:$("#edu").value.trim(),
+    experience_type:(document.querySelector("input[name=experience_type]:checked")||{}).value||"",
+    years_in_aff:$("#affy").value.trim(), other_companies:$("#oth").value.trim()};
+  SECTIONS.forEach(s => { d[s.key] = {}; s.rows.forEach(([e],r) => { const c = document.querySelector(`input[name="${s.key}_${r}"]:checked`); d[s.key][e] = c ? c.value : ""; }); });
+  d.suggestions = $("#sug").value;
+  d.recommendation = (document.querySelector("input[name=recommendation]:checked")||{}).value||"";
+  return d;
+}
+function populate(d){
+  $("#f").reset(); chosen = d.employee_name || ""; nameEl.value = chosen;
+  $("#dept").value = d.department || ""; $("#edu").value = d.last_certificate || "";
+  setRadio("experience_type", d.experience_type);
+  $("#affy").value = d.years_in_aff || ""; $("#oth").value = d.other_companies || "";
+  SECTIONS.forEach(s => s.rows.forEach(([e],r) => setRadio(`${s.key}_${r}`, (d[s.key]||{})[e])));
+  $("#sug").value = d.suggestions || ""; setRadio("recommendation", d.recommendation);
+  document.querySelectorAll(".bad").forEach(x => x.classList.remove("bad"));
+  setYear(d.year || THIS_YEAR);
+}
+const num = v => { const m = /\((\d)\)/.exec(v||""); return m ? +m[1] : null; };
+function avg(vals){ const n = vals.map(num).filter(x => x !== null); return n.length ? (n.reduce((a,b)=>a+b,0)/n.length).toFixed(2) : "-"; }
+
+function report(d){
+  const rec = RECS.find(r => r[0] === d.recommendation);
+  const meta = [["اسم الموظف / Employee Name",d.employee_name],["القسم / Department",d.department],["آخر مؤهل دراسي / Last Educational certificate",d.last_certificate],
+    ["نوع الخبرة / Experience",d.experience_type],["سنوات الخبرة في AFF / Years in AFF",d.years_in_aff],["الشركات الأخرى وسنوات الخبرة / Other companies",d.other_companies]];
+  let all = [];
+  const secs = SECTIONS.map(s => {
+    const vals = s.rows.map(([e]) => d[s.key][e]); all = all.concat(vals);
+    return `<h3>${s.n}. ${s.en} - ${s.ar}</h3><table><tbody>${s.rows.map(([e,a]) => `<tr><td>${e}<br>${a}</td><td class="r">${esc(d[s.key][e])}</td></tr>`).join("")}
+    <tr><td class="avg" colspan="2">المتوسط / Average: ${avg(vals)} / 5</td></tr></tbody></table>`;
+  }).join("");
+  return `<h2>Annual Performance Review - ${esc(d.year)}</h2><div>تقييم أداء موظف عن عام ${esc(d.year)} &nbsp;|&nbsp; ${new Date(d.saved_at).toLocaleDateString("en-GB")}</div>
+  <h3>بيانات الموظف / Employee Information</h3><table><tbody>${meta.map(([k,v]) => `<tr><th>${k}</th><td>${esc(v)}</td></tr>`).join("")}</tbody></table>
+  ${secs}
+  <h3>المتوسط العام / Overall Average: ${avg(all)} / 5</h3>
+  <h3>10. اقتراحات لرفع مستوى قدرات الموظف / Suggestions for Improving Employee Skills</h3><table><tbody><tr><td>${esc(d.suggestions)}</td></tr></tbody></table>
+  <h3>11. توصية معتمد التقييم / Evaluator’s Recommendation</h3><table><tbody><tr><td>${rec ? rec[0] + " - " + rec[1] : ""}</td></tr></tbody></table>`;
+}
+function showReport(d, msg){
+  last = d; $("#rep").innerHTML = report(d); $("#savemsg").textContent = msg || "";
+  $("#f").classList.add("hidden"); $("#saved").classList.add("hidden"); $("#done").classList.remove("hidden"); scrollTo(0,0); $("#done").focus();
+}
+function showForm(){ $("#done").classList.add("hidden"); $("#f").classList.remove("hidden"); renderSaved(); scrollTo(0,0); }
+
+function renderSaved(){
+  const all = loadAll(), ids = Object.keys(all).sort((a,b) => all[b].saved_at.localeCompare(all[a].saved_at));
+  $("#saved").classList.toggle("hidden", !ids.length);
+  $("#savedlist").innerHTML = ids.map(id => { const d = all[id];
+    return `<li><span>${esc(d.employee_name)} - ${esc(d.year)} - ${new Date(d.saved_at).toLocaleDateString("en-GB")}</span>
+    <button type="button" data-a="view" data-id="${esc(id)}">عرض / PDF</button>
+    <button type="button" class="alt" data-a="edit" data-id="${esc(id)}">تعديل</button>
+    <button type="button" class="alt" data-a="del" data-id="${esc(id)}">حذف</button></li>`; }).join("");
+}
+$("#savedlist").addEventListener("click", e => {
+  const b = e.target.closest("button[data-a]"); if(!b) return;
+  const all = loadAll(), d = all[b.dataset.id]; if(!d) return;
+  if(b.dataset.a === "view") showReport(d, "");
+  else if(b.dataset.a === "edit"){ populate(d); scrollTo(0,0); }
+  else if(confirm("حذف هذا التقييم من الجهاز؟")){ delete all[b.dataset.id]; saveAll(all); renderSaved(); }
+});
+$("#imp").addEventListener("change", async e => {
+  const f = e.target.files[0]; if(!f) return;
+  try{
+    const d = JSON.parse(await f.text()); if(!d.employee_name) throw 0;
+    const all = loadAll(); all[d.year + "|" + d.employee_name] = d; saveAll(all); renderSaved(); populate(d);
+  }catch(_){ alert("الملف غير صالح"); }
+  e.target.value = "";
+});
+
+$("#f").addEventListener("submit", e => {
+  e.preventDefault();
+  if (!validate()) return;
+  const d = collect(), all = loadAll();
+  all[d.year + "|" + d.employee_name] = d;
+  showReport(d, saveAll(all) ? "تم حفظ التقييم على هذا الجهاز ويمكنك الرجوع إليه وتعديله من أعلى الصفحة." : "تعذر الحفظ على المتصفح، نزّل نسخة JSON للاحتفاظ بها.");
+});
+$("#print").onclick = () => window.print();
+$("#edit").onclick = () => { populate(last); showForm(); };
+$("#again").onclick = () => { $("#f").reset(); chosen = ""; setYear(THIS_YEAR); showForm(); };
+$("#dl").onclick = () => {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(last,null,2)],{type:"application/json"}));
+  a.download = "performance-review-" + last.year + "-" + last.employee_name.replace(/\s+/g,"_") + ".json";
+  a.click();
+};
+document.addEventListener("input", e => {
+  const fs = e.target.closest("fieldset.bad"); if (fs && !fs.dataset.m) fs.classList.remove("bad");
+  const tr = e.target.closest("tr.bad"); if (tr) tr.classList.remove("bad");
+});
+renderSaved();
+</script>
+</body>
+</html>
